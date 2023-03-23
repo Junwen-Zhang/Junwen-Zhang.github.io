@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="gcc&#x2F;g++  12345gcc -E hello.c -o hello.igcc -S hello.i -o jello.s &#x2F; gcc -S hello.c -o hello.sgcc -c hello.s -o hello.o &#x2F; gcc -c hello.c -o hello.ogcc hello.o -o hello &#x2F; gcc hello.c -o hello # 动态连接gcc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MakeFile笔记">
+<meta property="og:url" content="http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="June文的小站">
+<meta property="og:description" content="gcc&#x2F;g++  12345gcc -E hello.c -o hello.igcc -S hello.i -o jello.s &#x2F; gcc -S hello.c -o hello.sgcc -c hello.s -o hello.o &#x2F; gcc -c hello.c -o hello.ogcc hello.o -o hello &#x2F; gcc hello.c -o hello # 动态连接gcc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/image-20230322213727869.png">
+<meta property="article:published_time" content="2023-03-22T13:15:59.000Z">
+<meta property="article:modified_time" content="2023-03-22T16:35:28.628Z">
+<meta property="article:author" content="JuneWen">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/image-20230322213727869.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>MakeFile笔记</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/Junwen-Zhang">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/03/19/accelergy-timeloop%E5%BA%95%E5%B1%82%E4%BC%98%E5%8C%96/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&text=MakeFile笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&is_video=false&description=MakeFile笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MakeFile笔记&body=Check out this article: http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&name=MakeFile笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&t=MakeFile笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#gccg"><span class="toc-number">1.</span> <span class="toc-text">gcc&#x2F;g++</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-number">2.</span> <span class="toc-text">预定义变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#makefile%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">3.</span> <span class="toc-text">Makefile注意事项</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        MakeFile笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">JuneWen</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-03-22T13:15:59.000Z" itemprop="datePublished">2023-03-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%8A%80%E8%83%BD/">技能</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="gccg">gcc/g++</h2>
+<p><img src="/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/image-20230322213727869.png" alt="image-20230322213727869" style="zoom: 50%;"></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gcc -E hello.c -o hello.i</span><br><span class="line">gcc -S hello.i -o jello.s / gcc -S hello.c -o hello.s</span><br><span class="line">gcc -c hello.s -o hello.o / gcc -c hello.c -o hello.o</span><br><span class="line">gcc hello.o -o hello / gcc hello.c -o hello <span class="comment"># 动态连接</span></span><br><span class="line">gcc hello.o hello_static --static / gcc hello.c hello_static --static <span class="comment"># 静态连接</span></span><br></pre></td></tr></table></figure>
+<p>Linux下生成的
+<code>.o</code>目标文件、<code>.so</code>动态库文件以及下一小节链接阶段生成最终的可执行文件都是elf格式的，
+可以使用<code>readelf</code>工具来查看它们的内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -a hello.o</span><br></pre></td></tr></table></figure>
+<p>在Ubuntu下，可以使用 <strong>ldd</strong>
+工具查看动态文件的库依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldd hello</span><br></pre></td></tr></table></figure>
+<h2 id="预定义变量">预定义变量</h2>
+<p>$* 　　不包含扩展名的目标文件名称。 指代匹配符 % 匹配的部分， 比如%
+匹配 f1.txt 中的f1 ，$* 就表示 f1</p>
+<p>$@ 　 目标的完整名称。</p>
+<p>$% 如果目标是归档成员，则该变量表示目标的归档成员名称。</p>
+<p>$&lt; 　　第一个依赖文件的名称。</p>
+<p>$+
+　　所有的依赖文件，以空格分开，并以出现的先后为序，可能包含重复的依赖文件。</p>
+<p>$^ 　　所有的依赖文件，以空格分开，不包含重复的依赖文件。</p>
+<p>$?
+　　所有的依赖文件，以空格分开，这些依赖文件的修改日期比目标的创建日期晚。</p>
+<p>$(<span class="citation" data-cites="D">@D</span>) 和 $(<span class="citation" data-cites="F">@F</span>) 分别指向 $@
+的目录名和文件名</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">VARIABLE = value  <span class="comment"># 在执行时扩展，允许递归扩展。</span></span><br><span class="line">VARIABLE := value <span class="comment"># 在定义时扩展。</span></span><br><span class="line">VARIABLE ?= value <span class="comment"># 只有在该变量为空时才设置值。</span></span><br><span class="line">VARIABLE += value <span class="comment"># 将值追加到变量的尾端。</span></span><br></pre></td></tr></table></figure>
+<h2 id="makefile注意事项">Makefile注意事项</h2>
+<ol type="1">
+<li><p>tab分隔，不能用空格。</p></li>
+<li><p>每个makefile最好加一个all</p></li>
+<li><p>注释用“#”符号</p></li>
+<li><p>文件指示，引用其他的makefile文件</p></li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/Junwen-Zhang">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#gccg"><span class="toc-number">1.</span> <span class="toc-text">gcc&#x2F;g++</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-number">2.</span> <span class="toc-text">预定义变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#makefile%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">3.</span> <span class="toc-text">Makefile注意事项</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&text=MakeFile笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&is_video=false&description=MakeFile笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MakeFile笔记&body=Check out this article: http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&title=MakeFile笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&name=MakeFile笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2023/03/22/MakeFile%E7%AC%94%E8%AE%B0/&t=MakeFile笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2023
+    JuneWen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/search/">搜索</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/Junwen-Zhang">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?7f1cdd299fd07fce81f0a77b5ee9e8c4";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
